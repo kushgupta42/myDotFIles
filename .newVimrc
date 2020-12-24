@@ -8,7 +8,7 @@ set linebreak	" Break lines at word (requires Wrap lines)
 set showbreak=+++ 	" Wrap-broken line prefix
 set textwidth=100	" Line wrap (number of cols)
 set showmatch	" Highlight matching brace
-set spell	" Enable spell-checking 
+set spell	" Enable spell-checking
 set wildmenu
 set wildmode=list:longest,full
 set mouse=a     " to get mouse support
@@ -18,7 +18,7 @@ set hlsearch	" Highlight all search results
 set smartcase	" Enable smart-case search
 set ignorecase	" Always case-insensitive
 set incsearch	" Searches for strings incrementally
- 
+
 set autoindent	" Auto-indent new lines
 set cindent	" Use 'C' style program indenting
 set expandtab	" Use spaces instead of tabs
@@ -26,33 +26,35 @@ set shiftwidth=2	" Number of auto-indent spaces
 set smartindent	" Enable smart-indent
 set smarttab	" Enable smart-tabs
 set softtabstop=2	" Number of spaces per Tab
- 
+
 "" Advanced
-set confirm	" Prompt confirmation dialog 
+set confirm	" Prompt confirmation dialog
 set ruler	" Show row and column ruler information
- 
+
 set undolevels=1000	"Number of undo levels
 set backspace=indent,eol,start	"Backspace behaviour
 
-" color scheme
-colorscheme gruvbox
-"colorscheme spacegray
-set bg=dark
 
 " visible indent lines
-set listchars=tab:\|\  
-set list
+"set listchars=tab:\|\
+"set list
 
 
-" plugins 
+" plugins
 call plug#begin('~/.vim/plugged')
 " Put your plugins here.
 Plug 'ctrlpvim/ctrlp.vim'
 Plug 'preservim/nerdtree'
 Plug 'junegunn/fzf.vim'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'morhetz/gruvbox'
+"Plug 'zxqfl/tabnine-vim'
+Plug 'jiangmiao/auto-pairs'
 call plug#end()
 
+"colorscheme
+colorscheme gruvbox
+set bg=dark
 " setting leader
 let mapleader = " "
 
@@ -62,7 +64,7 @@ let g:ctrlp_custom_ignore = {
   \ 'file': '\.so$\|\.dat$|\.DS_Store$'
   \ }
 
-" nerd tree config 
+" nerd tree config
 autocmd StdinReadPre * let s:std_in=1
 autocmd VimEnter * if argc() == 1 && isdirectory(argv()[0]) && !exists("s:std_in") | exe 'NERDTree' argv()[0] | wincmd p | ene | exe 'cd '.argv()[0] | endif
 
@@ -128,6 +130,7 @@ command! -bang -nargs=* Rg
   \ call fzf#vim#grep(
   \   'rg --column --line-number --no-heading --color=always --smart-case '.shellescape(<q-args>), 1,
   \   fzf#vim#with_preview(), <bang>0)
+"colorscheme spacegray
 
 " Ripgrep advanced
 function! RipgrepFzf(query, fullscreen)
@@ -145,3 +148,34 @@ command! -bang -nargs=* GGrep
   \ call fzf#vim#grep(
   \   'git grep --line-number '.shellescape(<q-args>), 0,
   \   fzf#vim#with_preview({'dir': systemlist('git rev-parse --show-toplevel')[0]}), <bang>0)
+
+" addign cpp header in .cpp files
+au bufnewfile *.cpp 0r ~/.vim/header/header-cpp.temp
+au bufnewfile,bufread *.cpp :call MakeCpp()
+
+
+""" Compilling c++ and executing
+nnoremap <leader><C-b> :!g++ -o %:r.out % && ./%:r.out<CR>
+
+""""" making environment for cpp
+fu! MakeCpp()
+  vsplit /mnt/extra/io/input.txt
+      split /mnt/extra/io/output.txt
+    endfunction
+    nnoremap <leader>cpp :call MakeCpp()<CR>
+
+    """"" resizing split window
+    nnoremap <C-Left> :vertical resize -5<CR>
+    nnoremap <C-Right> :vertical resize +5<CR>
+    nnoremap <C-Up> :resize +5<CR>
+    nnoremap <C-Down> :resize -5<Cr>
+
+    """"" terminsl emulation
+    nnoremap <silent> <leader>sh :terminal<CR>"""
+
+    """ spliting setting
+    set splitright
+    set splitbelow
+
+    """"tab completion
+    set wildmenu
