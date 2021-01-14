@@ -2,13 +2,14 @@ filetype plugin indent on
 syntax on
 
 "General
+set nocompatible
 set number	" Show line numbers
+set rnu
 set numberwidth=4 " set number field width
 set linebreak	" Break lines at word (requires Wrap lines)
 set showbreak=+++ 	" Wrap-broken line prefix
 set textwidth=100	" Line wrap (number of cols)
 set showmatch	" Highlight matching brace
-set spell	" Enable spell-checking
 set wildmenu
 set wildmode=list:longest,full
 set mouse=a     " to get mouse support
@@ -35,32 +36,109 @@ set ruler	" Show row and column ruler information
 "set tw=79
 set undolevels=1000	"Number of undo levels
 set backspace=indent,eol,start	"Backspace behaviour
-
+set noswapfile
+set nobackup
+set undodir=~/.vim/undodir
+set undofile
 "highlight current line
 set cursorline
 " visible indent lines
 "set listchars=tab:\|\
 "set list
-
+set scr=8
 " autoreload
 set autoread
 
+" dont show current mode in status
+set nosmd
 " plugins
 call plug#begin('~/.vim/plugged')
 " Put your plugins here.
+Plug 'mhinz/vim-startify'
 Plug 'preservim/nerdtree'
 Plug 'junegunn/fzf.vim'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'morhetz/gruvbox'
-"Plug 'zxqfl/tabnine-vim'
 Plug 'jiangmiao/auto-pairs'
+Plug 'Valloric/YouCompleteMe'
+Plug 'mbbill/undotree'
+Plug 'ryanoasis/vim-devicons'
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+Plug 'yorickpeterse/happy_hacking.vim'
+Plug 'sheerun/vim-polyglot'
+Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
+Plug 'Xuyuanp/nerdtree-git-plugin'
+Plug 'preservim/nerdcommenter'
+Plug 'tpope/vim-surround'
 call plug#end()
 
+" Nerd Commenter
+" " Use compact syntax for prettified multi-line comments
+let g:NERDCompactSexyComs = 1
+" " Allow commenting and inverting empty lines (useful when commenting a region)
+let g:NERDCommentEmptyLines = 1
+" " Enable trimming of trailing whitespace when uncommenting
+let g:NERDTrimTrailingWhitespace = 1
+" " Enable NERDCommenterToggle to check all selected lines is commented or not
+let g:NERDToggleCheckAllLines = 1
+" " Add spaces after comment delimiters by default
+let g:NERDSpaceDelims = 1
+" " Map ++ to call NERD Commenter and use iTerm key bindings
+" " to bind Ctmd+/ to ++
+vmap == <plug>NERDCommenterToggle
+nmap == <plug>NERDCommenterToggle
+" imap <S-A> <plug>NERDCommenterToggle
+
+" undo tree config
+nnoremap <F5> :UndotreeToggle<CR>
+" ycm config
+map <leader>gt :tab split<CR>:exec("YcmCompleter GoToDefinitionElseDeclaration")<CR>
+
 "colorscheme
+if (has("termguicolors"))
+ set termguicolors
+endif
 colorscheme gruvbox
-set bg=dark
+let g:gruvbox_contrast_dark='hard'
+set background=dark
+"color happy_hacking
+
 " setting leader
 let mapleader = " "
+
+" " Map yanked to clipboard
+vnoremap <C-c> "*y
+" " Line moving
+" " " Normal mode
+nnoremap <C-j> :m .+1<CR>==
+nnoremap <C-k> :m .-2<CR>==
+" " Insert mode
+inoremap <C-j> <ESC>:m .+1<CR>==gi
+inoremap <C-k> <ESC>:m .-2<CR>==gi
+" " Visual mode
+vnoremap <C-j> :m '>+1<CR>gv=gv
+vnoremap <C-k> :m '<-2<CR>gv=gv
+
+" airline status bar config
+" enable tabline
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#left_sep = ''
+let g:airline#extensions#tabline#left_alt_sep = ''
+let g:airline#extensions#tabline#right_sep = ''
+let g:airline#extensions#tabline#right_alt_sep = ''
+
+" enable powerline fonts
+let g:airline_powerline_fonts = 1
+let g:airline_left_sep = ''
+let g:airline_right_sep = ''
+
+" Switch to your current theme
+let g:airline_theme = 'gruvbox'
+
+" Always show tabs
+"set showtabline=2
+
 
 " crtl+p config
 let g:ctrlp_custom_ignore = {
@@ -69,11 +147,71 @@ let g:ctrlp_custom_ignore = {
   \ }
 
 " nerd tree config
+let g:NERDTreeShowHidden = 1
+let g:NERDTreeMinimalUI = 1
+let g:NERDTreeIgnore = ['^node_modules$']
+let g:NERDTreeStatusline = ''
 autocmd StdinReadPre * let s:std_in=1
-autocmd VimEnter * if argc() == 1 && isdirectory(argv()[0]) && !exists("s:std_in") | exe 'NERDTree' argv()[0] | wincmd p | ene | exe 'cd '.argv()[0] | endif
+" autocmd VimEnter * if argc() == 1 && isdirectory(argv()[0]) && !exists("s:std_in") | exe 'NERDTree' argv()[0] | wincmd p | ene | exe 'cd '.argv()[0] | endif
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 map <C-B> :NERDTreeToggle<CR>
-autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
+" autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
+
+" NERDTree Syntax Highlight
+" " Enables folder icon highlighting using exact match
+let g:NERDTreeHighlightFolders = 1
+" " Highlights the folder name
+let g:NERDTreeHighlightFoldersFullName = 1
+" " Color customization
+let s:brown = "905532"
+let s:aqua =  "3AFFDB"
+let s:blue = "689FB6"
+let s:darkBlue = "44788E"
+let s:purple = "834F79"
+let s:lightPurple = "834F79"
+let s:red = "AE403F"
+let s:beige = "F5C06F"
+let s:yellow = "F09F17"
+let s:orange = "D4843E"
+let s:darkOrange = "F16529"
+let s:pink = "CB6F6F"
+let s:salmon = "EE6E73"
+let s:green = "8FAA54"
+let s:lightGreen = "31B53E"
+let s:white = "FFFFFF"
+let s:rspec_red = 'FE405F'
+let s:git_orange = 'F54D27'
+" " This line is needed to avoid error
+let g:NERDTreeExtensionHighlightColor = {}
+" " Sets the color of css files to blue
+let g:NERDTreeExtensionHighlightColor['css'] = s:blue
+" " This line is needed to avoid error
+let g:NERDTreeExactMatchHighlightColor = {}
+" " Sets the color for .gitignore files
+let g:NERDTreeExactMatchHighlightColor['.gitignore'] = s:git_orange
+" " This line is needed to avoid error
+let g:NERDTreePatternMatchHighlightColor = {}
+" " Sets the color for files ending with _spec.rb
+let g:NERDTreePatternMatchHighlightColor['.*_spec\.rb$'] = s:rspec_red
+" " Sets the color for folders that did not match any rule
+let g:WebDevIconsDefaultFolderSymbolColor = s:beige
+" " Sets the color for files that did not match any rule
+let g:WebDevIconsDefaultFileSymbolColor = s:blue
+
+" NERDTree Git Plugin
+let g:NERDTreeGitStatusIndicatorMapCustom = {
+    \ "Modified"  : "✹",
+    \ "Staged"    : "✚",
+    \ "Untracked" : "✭",
+    \ "Renamed"   : "➜",
+    \ "Unmerged"  : "═",
+    \ "Deleted"   : "✖",
+    \ "Dirty"     : "✗",
+    \ "Clean"     : "✔︎",
+    \ 'Ignored'   : '☒',
+    \ "Unknown"   : "?"
+    \ }
+
 
 "=================
 " fzf and ripgrep
@@ -100,6 +238,11 @@ set rtp+=/usr/local/opt/fzf
 
 nnoremap <C-P> :Files<cr>
 nnoremap <C-F> :Rg<cr>
+let g:fzf_action = {
+  \ 'ctrl-t': 'tab split',
+  \ 'ctrl-s': 'split',
+  \ 'ctrl-v': 'vsplit'
+  \}
 
 " addign cpp header in .cpp files
 au bufnewfile *.cpp 0r ~/.vim/header/header-cpp.temp
